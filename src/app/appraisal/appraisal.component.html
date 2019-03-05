@@ -1,0 +1,21 @@
+<p>
+  appraisal works!
+</p>
+<h2>Paste appraisal here: </h2>
+    <form>
+        <div class="form-group">
+                <textarea class="form-control"
+                          name="message"
+                          rows="10"
+                          id="field_message"
+                          [(ngModel)]="additionalRaw" required></textarea>
+        </div>
+        <p>
+            <button class="btn btn-primary" (click)="executeAppraisal()" >
+                Evaluate
+            </button>
+            <button class="btn btn-danger" (click)="clearAppraisal()" >Clear</button>
+        </p>
+    </form>
+    <h1>Buyback value: {{output|number:'1.2'}} isk</h1>
+    <h1>Buyback at: {{totalfeepct|number:'1.0-0'}}%</h1>
