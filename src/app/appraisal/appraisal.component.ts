@@ -17,6 +17,7 @@ export class AppraisalComponent implements OnInit {
   totalfeepct=0;
   buyfrombuyback=0;
   buyfeepct=0;
+  items = [];
 
   constructor(private appraisalService : AppraisalService) { }
 
@@ -28,7 +29,8 @@ export class AppraisalComponent implements OnInit {
                     res=> {  this.output=res['totals']['buy']*this.buybackpct-res['totals']['volume']*this.iskperm3;
                              this.totalfeepct=100.0*this.output/res['totals']['buy'];
                              this.buyfrombuyback=res['totals']['buy']-res['totals']['volume']*this.iskperm3;
-                             this.buyfeepct=100.0*this.buyfrombuyback/res['totals']['buy'];},
+                             this.buyfeepct=100.0*this.buyfrombuyback/res['totals']['buy'];
+                             this.items = res['items'];},
                     res=> console.log(res));
                            }
 

@@ -19,3 +19,24 @@
     <hr>
     <h3>Buy from Buyback value: {{buyfrombuyback|number:'1.2-2'}} isk</h3>
     <h3>Rate: {{buyfeepct|number:'1.1-1'}}%</h3>
+    <hr>
+<table>
+  <tr>
+    <td></td>
+    <td>QTY</td>
+    <td>Name</td>
+    <td>Unit sell to BB</td>
+    <td>Sell %</td>
+    <td>Unit buy from BB</td>
+    <td>Buy %</td>
+    </tr>
+  <tr *ngFor="let item of items">
+    <img [src]=" 'https://image.eveonline.com/Type/'+item.typeID + '_32.png' " />
+    <td>{{item.quantity}}</td>
+    <td>{{item.typeName}}</td>
+    <td>{{item.prices.buy.max*buybackpct-item.typeVolume*iskperm3|number:'1.2-2'}}</td>
+    <td>{{(item.prices.buy.max*buybackpct-item.typeVolume*iskperm3)/item.prices.buy.max*100|number:'1.1-1'}}%</td>
+    <td>{{item.prices.buy.max-item.typeVolume*iskperm3|number:'1.2-2'}}</td>
+    <td>{{(item.prices.buy.max-item.typeVolume*iskperm3)/item.prices.buy.max*100|number:'1.1-1'}}%</td>
+  </tr>
+<table>
