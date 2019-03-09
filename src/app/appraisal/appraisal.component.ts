@@ -8,10 +8,9 @@ import { AppraisalService } from '../appraisal.service';
 })
 
 export class AppraisalComponent implements OnInit {
-  additionalRaw;
-
-  buybackpct = 0.90;
-  iskperm3 = 700;
+  evepraisal_link;
+  buybackpct = 0.85;
+  iskperm3 = 350;
 
   output=0;
   totalfeepct=0;
@@ -25,7 +24,7 @@ export class AppraisalComponent implements OnInit {
   }
 
   executeAppraisal(): void {
-    this.appraisalService.getAppraisal(this.additionalRaw).subscribe(
+    this.appraisalService.getAppraisal(this.evepraisal_link).subscribe(
                     res=> {  this.output=res['totals']['buy']*this.buybackpct-res['totals']['volume']*this.iskperm3;
                              this.totalfeepct=100.0*this.output/res['totals']['buy'];
                              this.buyfrombuyback=res['totals']['buy']-res['totals']['volume']*this.iskperm3;
@@ -35,7 +34,7 @@ export class AppraisalComponent implements OnInit {
                            }
 
   clearAppraisal(): void {
-    this.additionalRaw = "";
+    this.evepraisal_link = "";
     this.output=0;
     this.totalfeepct=0;
   }  
