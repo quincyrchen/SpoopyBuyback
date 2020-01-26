@@ -45,8 +45,8 @@
     <td><img [src]=" 'https://image.eveonline.com/Type/'+item.typeID + '_32.png' " /> </td>
     <td>{{item.quantity}}</td>
     <td>{{item.typeName}}</td>
-    <td>{{item.prices.buy.max*buybackpct-item.typeVolume*iskperm3|number:'1.2-2'}}</td>
-    <td>{{(item.prices.buy.max*buybackpct-item.typeVolume*iskperm3)/item.prices.buy.max*100|number:'1.1-1'}}%</td>
+    <td>{{item.prices.buy.max*buybackpct-math.min(item.typeVolume*iskperm3, item.prices.buy.max*volumepctmax)|number:'1.2-2'}}</td>
+    <td>{{(item.prices.buy.max*buybackpct-math.min(item.typeVolume*iskperm3, item.prices.buy.max*volumepctmax))/item.prices.buy.max*100|number:'1.1-1'}}%</td>
 <!--    <td>{{item.prices.buy.max-item.typeVolume*iskperm3|number:'1.2-2'}}</td>
     <td>{{(item.prices.buy.max-item.typeVolume*iskperm3)/item.prices.buy.max*100|number:'1.1-1'}}%</td> -->
   </tr>
