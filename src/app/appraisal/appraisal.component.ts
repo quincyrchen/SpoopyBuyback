@@ -28,7 +28,7 @@ export class AppraisalComponent implements OnInit {
     this.appraisalService.getAppraisal(this.evepraisal_link).subscribe(
                     res=> {  this.output=res['totals']['buy']*this.buybackpct-Math.min(res['totals']['volume']*this.iskperm3, volumepctmax*res['totals']['buy']);
                              this.totalfeepct=100.0*this.output/res['totals']['buy'];
-                             this.buyfrombuyback=res['totals']['buy']-res['totals']['volume']*this.iskperm3;
+                             this.buyfrombuyback=res['totals']['buy']-Math.min(res['totals']['volume']*this.iskperm3, volumepctmax*res['totals']['buy']);
                              this.buyfeepct=100.0*this.buyfrombuyback/res['totals']['buy'];
                              this.items = res['items'];},
                     res=> console.log(res));
