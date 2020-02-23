@@ -21,15 +21,6 @@ export class AppraisalService {
   buy;
 
   getAppraisal(raw:String) {
-    // return raw;
-    return this.http.get(raw+".json");
-
-
-
-
-    // return this.http.post("https://evepraisal.com/appraisal.json?market=jita&raw_textarea=avatar&persist=no", "", httpOptions);  //should work, but CORS setting screws it up
-
-   //return this.http.get('https://api.github.com/users/seeschweiler');
-
+    return this.http.get(raw + ".json");
   } 
 }

@@ -1,4 +1,3 @@
-
 <div class="container">
 <div class="row">
 <div class="col-md">
@@ -7,7 +6,7 @@
         <div class="form-group">
             <label for="evepraisal_link">Paste evepraisal.com here link here:</label>
             <input type="text" class="form-control" aria-describedby="evepraisal_help"  id="evepraisal_link" name="evepraisal_link" [(ngModel)]="evepraisal_link"/>
-            <small id="evepraisal_help" class="form-text text-muted">Remember to set trade hub to Amarr</small>
+            <small id="evepraisal_help" class="form-text text-muted">Please set trade hub to Amarr</small>
         </div>
             <button class="btn btn-primary" (click)="executeAppraisal()" >
                 Evaluate
@@ -18,16 +17,18 @@
 
 <div class="col-md">
     <h2>Appraisal Total:</h2>
-    <p>Sell to Buyback value: {{output|number:'1.2-2'}} isk<br />Effective Rate: {{totalfeepct|number:'1.1-1'}}%</p>
+    <p>
+      Sell to Buyback value: {{totalSellToBuybackValue|number:'1.2-2'}} isk
+      <br />
+      Total Effective Rate: {{totalSellToBuybackPercent|number:'1.2-2'}}%
+      <br />
+      <span *ngIf="tradeHub">
+        Trade-Hub: {{tradeHub}}
+      </span>
+    </p>
 </div>
 </div>
 </div>
-
-
-
-<!--    <h3>Buy from Buyback value: {{buyfrombuyback|number:'1.2-2'}} isk</h3>
-    <h3>Rate: {{buyfeepct|number:'1.1-1'}}%</h3>
-    <hr> -->
 
 <div class="container">
 <h2>Itemized Appraisal:</h2>
@@ -36,19 +37,54 @@
     <th scope="col"></th>
     <th scope="col">QTY</th>
     <th scope="col">Name</th>
-    <th scope="col">Unit sell to BB</th>
-    <th scope="col">Sell %</th>
-<!--    <td>Unit buy from BB</td>
-    <td>Buy %</td> -->
-    </tr>
+    <th scope="col">
+        <tr>Total {{tradeHub}} Sell</tr>
+        <tr>Single {{tradeHub}} Sell</tr>
+    </th>
+    <th scope="col">
+        <tr>Total {{tradeHub}} Buy</tr>
+        <tr>Single {{tradeHub}} Buy</tr>
+    </th>
+    <th scope="col">
+        <tr>Total Hauling Fee</tr>
+        <tr>Single Hauling Fee</tr>
+    </th>
+    <th scope="col">
+        <tr>Total Buyback Tax</tr>
+        <tr>Single Buyback Tax</tr>
+    </th>
+    <th scope="col">
+        <tr>Total Buyback Value</tr>
+        <tr>Single Buyback Value</tr>
+    </th>
+    <th scope="col">Effective Rate %</th>
+  </tr>
   <tr *ngFor="let item of items">
     <td><img [src]=" 'https://image.eveonline.com/Type/'+item.typeID + '_32.png' " /> </td>
     <td>{{item.quantity}}</td>
     <td>{{item.typeName}}</td>
-    <td>{{item.prices.buy.max*buybackpct-math.min(item.typeVolume*iskperm3, item.prices.buy.max*volumepctmax)|number:'1.2-2'}}</td>
-    <td>{{(item.prices.buy.max*buybackpct-math.min(item.typeVolume*iskperm3, item.prices.buy.max*volumepctmax))/item.prices.buy.max*100|number:'1.1-1'}}%</td>
-<!--    <td>{{item.prices.buy.max-item.typeVolume*iskperm3|number:'1.2-2'}}</td>
-    <td>{{(item.prices.buy.max-item.typeVolume*iskperm3)/item.prices.buy.max*100|number:'1.1-1'}}%</td> -->
+    <td>
+        <tr>{{item.prices.sell.min * item.quantity|number:'1.2-2'}}</tr>
+        <tr>{{item.prices.sell.min|number:'1.2-2'}}</tr>
+    </td>
+    <td>
+        <tr>{{item.prices.buy.max * item.quantity|number:'1.2-2'}}</tr>
+        <tr>{{item.prices.buy.max|number:'1.2-2'}}</tr>
+    </td>
+    <td>
+        <tr>{{item.haulingFee * item.quantity|number:'1.2-2'}}</tr>
+        <tr>{{item.haulingFee|number:'1.2-2'}}</tr>
+    </td>
+    <td>
+        <tr>{{item.buybackTax * item.quantity|number:'1.2-2'}}</tr>
+        <tr>{{item.buybackTax|number:'1.2-2'}}</tr>
+    </td>
+    <td>
+        <tr>{{item.unitPriceSellToBuyback * item.quantity|number:'1.2-2'}}</tr>
+        <tr>{{item.unitPriceSellToBuyback|number:'1.2-2'}}</tr>
+    </td>
+    <td>{{item.effectiveRate|number:'1.2-2'}}%
+    </td>
   </tr>
 </table>
 </div>

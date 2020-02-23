@@ -9,36 +9,125 @@ import { AppraisalService } from '../appraisal.service';
 
 export class AppraisalComponent implements OnInit {
   evepraisal_link;
-  buybackpct = 0.85;
-  iskperm3 = 350;
-  volumepctmax = 0.25;
+  buybackTax = 0.15;
+  iskPerM3 = 350;
+  haulingFeeMax = 0.25;
 
-  output=0;
-  totalfeepct=0;
-  buyfrombuyback=0;
-  buyfeepct=0;
+  totalSellToBuybackValue = 0;
+  totalSellToBuybackPercent = 0;
+
   items = [];
-  math = Math;
+  tradeHub;
+
+  // Tax exempt items have no hauling fee
+  // Tax exempt items are bought at Trade Hub Sell price
+  exemptions = [
+    4246, // Hydrogen Fuel Block
+    4247, // Helium Fuel Block
+    4051, // Nitrogen Fuel Block
+    4312 // Oxygen Fuel Block
+  ];
 
   constructor(private appraisalService : AppraisalService) { }
 
   ngOnInit() {
   }
 
+  capitalizeFirstLetter(word: string): string {
+    let firstChar = word.charAt(0);
+    let restOfWord = word.slice(1);
+    return firstChar.toUpperCase() + restOfWord;
+  }
+
   executeAppraisal(): void {
     this.appraisalService.getAppraisal(this.evepraisal_link).subscribe(
-                    res=> {  this.output=res['totals']['buy']*this.buybackpct-Math.min(res['totals']['volume']*this.iskperm3, this.volumepctmax*res['totals']['buy']);
-                             this.totalfeepct=100.0*this.output/res['totals']['buy'];
-                             this.buyfrombuyback=res['totals']['buy']-Math.min(res['totals']['volume']*this.iskperm3, this.volumepctmax*res['totals']['buy']);
-                             this.buyfeepct=100.0*this.buyfrombuyback/res['totals']['buy'];
-                             this.items = res['items'];},
-                    res=> console.log(res));
-                           }
+      res => {  
+        this.tradeHub = this.capitalizeFirstLetter(res["market_name"]);
+        this.items = res['items'];
+        this.calculateBuyback();
+      },
+      res => console.log(res)
+    )
+  }
 
   clearAppraisal(): void {
     this.evepraisal_link = "";
-    this.output=0;
-    this.totalfeepct=0;
-  }  
+    this.totalSellToBuybackValue=0;
+    this.totalSellToBuybackPercent=0;
+    this.tradeHub = undefined;
+  }
 
+  calculateBuyback(): void {
+    this.calculateHaulingFee();
+    this.calculateBuybackTax();
+    this.calculateUnitPriceSellToBuyback();
+    this.calculateEffectiveRate();
+    this.calculateTotalSellToBuybackValue();
+    this.calculateTotalSellToBuybackPercent();
+  }
+
+  calculateHaulingFee(): void {
+    for (let i in this.items) {
+      // Tax exempt items have no hauling fee
+      if (this.exemptions.includes(this.items[i]["typeID"])) {
+        this.items[i].haulingFee = 0;
+      } else {
+        this.items[i].haulingFee = 
+        Math.min(this.items[i].typeVolume*this.iskPerM3, 
+        this.items[i].prices.buy.max*this.haulingFeeMax);
+      }
+    }
+  }
+
+  calculateBuybackTax(): void {
+    for (let i in this.items) {
+      if (this.exemptions.includes(this.items[i]["typeID"])) {
+        this.items[i].buybackTax = 0;
+      } else {
+        this.items[i].buybackTax = this.items[i].prices.buy.max * this.buybackTax;
+      }
+    }
+  }
+
+  calculateUnitPriceSellToBuyback(): void {
+    for (let i in this.items) {
+      if (this.exemptions.includes(this.items[i]["typeID"])) {
+        this.items[i].unitPriceSellToBuyback = this.items[i].prices.sell.min;
+      } else {
+        this.items[i].unitPriceSellToBuyback = this.items[i].prices.buy.max - this.items[i].haulingFee - this.items[i].buybackTax;
+      }
+    }
+  }
+
+  calculateEffectiveRate(): void {
+    for (let i in this.items) {
+      if (this.exemptions.includes(this.items[i]["typeID"])) {
+        this.items[i].effectiveRate = this.items[i].unitPriceSellToBuyback / this.items[i].prices.sell.min * 100;
+      } else {
+        this.items[i].effectiveRate = this.items[i].unitPriceSellToBuyback / this.items[i].prices.buy.max * 100;
+      }
+    }
+  }
+
+  calculateTotalSellToBuybackValue(): void {
+    let totalValue = 0;
+    for (let i in this.items) {
+      totalValue += this.items[i].unitPriceSellToBuyback * this.items[i].quantity;
+    }
+
+    this.totalSellToBuybackValue = totalValue;
+  }
+
+  calculateTotalSellToBuybackPercent(): void {
+    let untaxedValue = 0;
+    for (let i in this.items) {
+      if (this.exemptions.includes(this.items[i]["typeID"])) {
+        untaxedValue += this.items[i].prices.sell.min * this.items[i].quantity;
+      } else {
+        untaxedValue += this.items[i].prices.buy.max * this.items[i].quantity;
+      }
+    }
+
+    this.totalSellToBuybackPercent = this.totalSellToBuybackValue / untaxedValue * 100;
+  }
 }
