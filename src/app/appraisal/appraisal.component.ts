@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AppraisalService } from '../appraisal.service';
+import { TaxExemptionService } from '../tax-exemption.service';
 
 @Component({
   selector: 'app-appraisal',
@@ -12,25 +13,22 @@ export class AppraisalComponent implements OnInit {
   buybackTax = 0.15;
   iskPerM3 = 350;
   haulingFeeMax = 0.25;
-
   totalSellToBuybackValue = 0;
   totalSellToBuybackPercent = 0;
-
   items = [];
+  exemptions = [];
   tradeHub;
 
-  // Tax exempt items have no hauling fee
-  // Tax exempt items are bought at Trade Hub Sell price
-  exemptions = [
-    4246, // Hydrogen Fuel Block
-    4247, // Helium Fuel Block
-    4051, // Nitrogen Fuel Block
-    4312 // Oxygen Fuel Block
-  ];
-
-  constructor(private appraisalService : AppraisalService) { }
+  constructor(
+    private appraisalService : AppraisalService,
+    private taxExemptionService: TaxExemptionService
+    ) { }
 
   ngOnInit() {
+    // This is currently instant. If we get a database and no longer have to hard-code
+    // this, then we should properly call this and ensure it completes prior to user
+    // executing an appraisal.
+    this.exemptions = this.taxExemptionService.getExemptions();
   }
 
   capitalizeFirstLetter(word: string): string {
@@ -45,6 +43,8 @@ export class AppraisalComponent implements OnInit {
         this.tradeHub = this.capitalizeFirstLetter(res["market_name"]);
         this.items = res['items'];
         this.calculateBuyback();
+        // Uncomment this to view evepraisal payload in console
+        // console.log(res);
       },
       res => console.log(res)
     )
