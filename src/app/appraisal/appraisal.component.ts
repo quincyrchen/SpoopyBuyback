@@ -38,7 +38,8 @@ export class AppraisalComponent implements OnInit {
   }
 
   executeAppraisal(): void {
-    this.appraisalService.getAppraisal(this.evepraisal_link).subscribe(
+    this.items = [];
+    this.appraisalService.getAppraisal(this.formatEvepraisalLink(this.evepraisal_link)).subscribe(
       res => {  
         this.tradeHub = this.capitalizeFirstLetter(res["market_name"]);
         this.items = res['items'];
@@ -50,11 +51,26 @@ export class AppraisalComponent implements OnInit {
     )
   }
 
+  // Reformats http link to https
+  formatEvepraisalLink(link: string): string {
+    let pattern = "(http:\/\/)(.+)";
+    let re = new RegExp(pattern);
+    let matches = re.exec(link);
+    if (matches == null) {
+      // If it doesn't match our http pattern, just return it
+      // TODO: Add a visible warning to the user if it doesn't match http or https
+      return link;
+    }
+    // If it matches our http pattern, change it to https
+    return "https://" + matches[2];
+  }
+
   clearAppraisal(): void {
     this.evepraisal_link = "";
     this.totalSellToBuybackValue=0;
     this.totalSellToBuybackPercent=0;
     this.tradeHub = undefined;
+    this.items = [];
   }
 
   calculateBuyback(): void {
