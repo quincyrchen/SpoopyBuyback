@@ -12,7 +12,7 @@ import { HaulingExemptionService } from '../hauling-exemption.service';
 export class AppraisalComponent implements OnInit {
   evepraisal_link;
   buybackTax = 0.15;
-  iskPerM3 = 350;
+  iskPerM3 = 154;
   haulingFeeMax = 0.25;
   totalSellToBuybackValue = 0;
   totalSellToBuybackPercent = 0;
@@ -111,9 +111,8 @@ export class AppraisalComponent implements OnInit {
 
   calculateUnitPriceSellToBuyback(): void {
     for (let i in this.items) {
-      // tax exempt items are purchased at sell minimum rather than buy maximum
       if (this.taxExemptions.includes(this.items[i]["typeID"])) {
-        this.items[i].unitPriceSellToBuyback = this.items[i].prices.sell.min;
+        this.items[i].unitPriceSellToBuyback = this.items[i].prices.buy.max;
       } else {
         this.items[i].unitPriceSellToBuyback = this.items[i].prices.buy.max - this.items[i].haulingFee - this.items[i].buybackTax;
       }
@@ -122,12 +121,7 @@ export class AppraisalComponent implements OnInit {
 
   calculateEffectiveRate(): void {
     for (let i in this.items) {
-      // tax exempt items are purchased at sell minimum rather than buy maximum
-      if (this.taxExemptions.includes(this.items[i]["typeID"])) {
-        this.items[i].effectiveRate = this.items[i].unitPriceSellToBuyback / this.items[i].prices.sell.min * 100;
-      } else {
-        this.items[i].effectiveRate = this.items[i].unitPriceSellToBuyback / this.items[i].prices.buy.max * 100;
-      }
+      this.items[i].effectiveRate = this.items[i].unitPriceSellToBuyback / this.items[i].prices.buy.max * 100;
     }
   }
 
@@ -143,12 +137,7 @@ export class AppraisalComponent implements OnInit {
   calculateTotalSellToBuybackPercent(): void {
     let untaxedValue = 0;
     for (let i in this.items) {
-      // tax exempt items are purchased at sell minimum rather than buy maximum
-      if (this.taxExemptions.includes(this.items[i]["typeID"])) {
-        untaxedValue += this.items[i].prices.sell.min * this.items[i].quantity;
-      } else {
-        untaxedValue += this.items[i].prices.buy.max * this.items[i].quantity;
-      }
+      untaxedValue += this.items[i].prices.buy.max * this.items[i].quantity;
     }
 
     this.totalSellToBuybackPercent = this.totalSellToBuybackValue / untaxedValue * 100;
