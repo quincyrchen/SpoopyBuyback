@@ -12,7 +12,7 @@ import { HaulingExemptionService } from '../hauling-exemption.service';
 export class AppraisalComponent implements OnInit {
   evepraisal_link;
   buybackTax = 0.15;
-  iskPerM3 = 154;
+  iskPerM3 = 385;
   haulingFeeMax = 0.25;
   totalSellToBuybackValue = 0;
   totalSellToBuybackPercent = 0;
