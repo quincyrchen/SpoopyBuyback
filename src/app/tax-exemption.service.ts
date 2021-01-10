@@ -8,10 +8,10 @@ export class TaxExemptionService {
   // Tax exempt items have no hauling fee
   // Tax exempt items are bought at Trade Hub Sell price
   exemptions = [
-    4246, // Hydrogen Fuel Block
-    4247, // Helium Fuel Block
-    4051, // Nitrogen Fuel Block
-    4312, // Oxygen Fuel Block
+    // 4246, // Hydrogen Fuel Block
+    // 4247, // Helium Fuel Block
+    // 4051, // Nitrogen Fuel Block
+    // 4312, // Oxygen Fuel Block
     // 28437, // Compressed Gelidus
     // 28440, // Compressed Krystallos
     // 28435, // Compressed Dark Glitter
